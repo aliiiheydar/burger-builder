@@ -9,26 +9,17 @@ import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary"
 import Spinner from "../../components/UI/Spinner/Spinner"
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler"
 import axios from "../../axios-orders"
-import * as actionTypes from "../../store/action"
+import * as actions from "../../store/actions/index"
 
 class BurgerBuilder extends Component {
     state = {
-        purchasable: false,
-        purchasing: false,
-        loading: false,
-        error: false
+        purchasing: false
     }
 
     componentDidMount() {
-        axios
-            .get("/ingredients")
-            .then((res) => {
-                this.props.onIngredientsLoaded(res.data)
-                this.setState({ error: false })
-            })
-            .catch((err) => {
-                this.setState({ error: true })
-            })
+        if (!this.props.ings) {
+            this.props.onInitIngredients()
+        }
     }
 
     updatePurchaseState(ingredients) {
@@ -51,6 +42,7 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinuelHandler = () => {
+        this.props.onInitPurchase()
         this.props.history.push("/checkout")
     }
 
@@ -62,11 +54,7 @@ class BurgerBuilder extends Component {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
 
-        let burger = this.state.error ? (
-            <p>Ingredients can't be loaded!</p>
-        ) : (
-            <Spinner />
-        )
+        let burger = this.props.error ? <p>Ingredients can't be loaded!</p> : <Spinner />
         let orderSummary = null
 
         if (this.props.ings) {
@@ -78,9 +66,7 @@ class BurgerBuilder extends Component {
                         ingredientRemoved={this.props.onIngredientRemoved}
                         disabled={disabledInfo}
                         price={this.props.price}
-                        purchasable={this.updatePurchaseState(
-                            this.props.ings
-                        )}
+                        purchasable={this.updatePurchaseState(this.props.ings)}
                         ordered={this.purchaseHandler}
                     />
                 </Aux>
@@ -94,10 +80,6 @@ class BurgerBuilder extends Component {
                     price={this.props.price.toFixed(2)}
                 />
             )
-        }
-
-        if (this.state.loading) {
-            orderSummary = <Spinner />
         }
 
         return (
@@ -116,29 +98,18 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice
+        ings: state.burgerBuilder.ingredients,
+        price: state.burgerBuilder.totalPrice,
+        error: state.burgerBuilder.error
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onIngredientAdded: (name) =>
-            dispatch({
-                type: actionTypes.ADD_INGREDIENT,
-                ingredientName: name
-            }),
-        onIngredientRemoved: (name) =>
-            dispatch({
-                type: actionTypes.REMOVE_INGREDIENT,
-                ingredientName: name
-            }),
-        onIngredientsLoaded: (ingredients) => {
-            dispatch({
-                type: actionTypes.LOAD_INGREDIENTS,
-                ingredients: ingredients
-            })
-        }
+        onIngredientAdded: (name) => dispatch(actions.addIngredient(name)),
+        onIngredientRemoved: (name) => dispatch(actions.removeIngredient(name)),
+        onInitIngredients: () => dispatch(actions.initIngredients()),
+        onInitPurchase: () => dispatch(actions.purchaseInit())
     }
 }
 
