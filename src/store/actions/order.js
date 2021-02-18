@@ -33,7 +33,7 @@ export const purchaseBurger = (orderData) => {
     return (dispatch, getState) => {
         dispatch(purchaseBurgerStart())
         axios
-            .post("/orders", orderData)
+            .post(`/orders/${getState().auth.token}`, orderData)
             .then((res) => {
                 const initialIngredients = { ...getState().burgerBuilder.ingredients }
                 for (let ingKey in initialIngredients) {
@@ -68,15 +68,21 @@ const fetchOrdersFail = () => {
 }
 
 export const fetchOrders = () => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
         dispatch(fetchOrdersStart())
         axios
-            .get("/orders")
+            .get(`/orders/${getState().auth.token}`)
             .then((res) => {
                 dispatch(fetchOrdersSuccess(res.data))
             })
             .catch((error) => {
                 dispatch(fetchOrdersFail(error))
             })
+    }
+}
+
+export const removeOrders = () => {
+    return {
+        type: actionTypes.REMOVE_ORDERS
     }
 }

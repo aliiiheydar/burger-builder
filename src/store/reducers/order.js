@@ -50,6 +50,12 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 loading: false
             }
+        case actionTypes.REMOVE_ORDERS:
+            console.log("remove")
+            return {
+                ...state,
+                orders: []
+            }
         default:
             return state
     }
