@@ -8,6 +8,7 @@ import axios from "../../../axios-orders"
 import classes from "./ContactData.module.css"
 import withErrorHandler from "../../../hoc/withErrorHandler/withErrorHandler"
 import * as actions from "../../../store/actions/index"
+import { checkValidity } from "../../../shared/utility"
 
 class ContactData extends Component {
     state = {
@@ -53,19 +54,6 @@ class ContactData extends Component {
                 valid: false,
                 touched: false
             },
-            email: {
-                elementType: "input",
-                elementConfig: {
-                    type: "email",
-                    placeholder: "Your E-Mail"
-                },
-                value: "",
-                validation: {
-                    required: true
-                },
-                valid: false,
-                touched: false
-            },
             deliveryMethod: {
                 elementType: "select",
                 elementConfig: {
@@ -86,7 +74,7 @@ class ContactData extends Component {
         const updatedOrderForm = { ...this.state.orderForm }
         const updatedOrderFormElement = { ...updatedOrderForm[id] }
         updatedOrderFormElement.value = event.target.value
-        updatedOrderFormElement.valid = this.checkValidity(
+        updatedOrderFormElement.valid = checkValidity(
             updatedOrderFormElement.value,
             updatedOrderFormElement.validation
         )
@@ -103,23 +91,6 @@ class ContactData extends Component {
             orderForm: updatedOrderForm,
             formIsValid: formIsValid
         })
-    }
-
-    checkValidity(value, rules) {
-        let isValid = true
-
-        if (rules.required) {
-            isValid = value.trim() !== "" && isValid
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-        return isValid
     }
 
     orderHandler = (event) => {

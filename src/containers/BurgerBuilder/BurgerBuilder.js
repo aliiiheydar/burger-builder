@@ -20,6 +20,9 @@ class BurgerBuilder extends Component {
         if (!this.props.ings) {
             this.props.onInitIngredients()
         }
+        if (this.props.orders.length === 0 && this.props.isAuth) {
+            this.props.onFetchOrders()
+        }
     }
 
     updatePurchaseState(ingredients) {
@@ -106,6 +109,7 @@ const mapStateToProps = (state) => {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
         error: state.burgerBuilder.error,
+        orders: state.order.orders,
         isAuth: state.auth.token !== null
     }
 }
@@ -115,7 +119,8 @@ const mapDispatchToProps = (dispatch) => {
         onIngredientAdded: (name) => dispatch(actions.addIngredient(name)),
         onIngredientRemoved: (name) => dispatch(actions.removeIngredient(name)),
         onInitIngredients: () => dispatch(actions.initIngredients()),
-        onInitPurchase: () => dispatch(actions.purchaseInit())
+        onInitPurchase: () => dispatch(actions.purchaseInit()),
+        onFetchOrders: () => dispatch(actions.fetchOrders())
     }
 }
 

@@ -7,6 +7,7 @@ import Button from "../../components/UI/Button/Button"
 import Spinner from "../../components/UI/Spinner/Spinner"
 import classes from "./Auth.module.css"
 import * as actions from "../../store/actions/index"
+import { checkValidity } from "../../shared/utility"
 
 class Auth extends Component {
     state = {
@@ -47,7 +48,7 @@ class Auth extends Component {
         const updatedControls = { ...this.state.controls }
         const updatedControlsElement = { ...updatedControls[id] }
         updatedControlsElement.value = event.target.value
-        updatedControlsElement.valid = this.checkValidity(
+        updatedControlsElement.valid = checkValidity(
             updatedControlsElement.value,
             updatedControlsElement.validation
         )
@@ -83,23 +84,6 @@ class Auth extends Component {
         })
     }
 
-    checkValidity(value, rules) {
-        let isValid = true
-
-        if (rules.required) {
-            isValid = value.trim() !== "" && isValid
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-        return isValid
-    }
-
     render() {
         let formElementsArray = []
 
@@ -125,7 +109,9 @@ class Auth extends Component {
                         touched={formElement.config.touched}
                     />
                 ))}
-                <Button btnType="Success">SUBMIT</Button>
+                <Button btnType="Success">
+                    {this.state.isSignup ? "SIGN UP" : "SIGN IN"}
+                </Button>
             </form>
         )
 
@@ -140,7 +126,7 @@ class Auth extends Component {
         let errorMessage = null
 
         if (this.props.error) {
-            errorMessage = <p>{this.props.error.error}</p>
+            errorMessage = <p>{this.props.error.message}</p>
         }
 
         return (

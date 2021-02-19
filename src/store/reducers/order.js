@@ -51,7 +51,6 @@ const reducer = (state = initialState, action) => {
                 loading: false
             }
         case actionTypes.REMOVE_ORDERS:
-            console.log("remove")
             return {
                 ...state,
                 orders: []

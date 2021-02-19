@@ -21,24 +21,41 @@ const authFail = (error) => {
     }
 }
 
-export const logout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("userId")
+const authLogout = () => {
     return {
         type: actionTypes.AUTH_LOGOUT
+    }
+}
+
+export const logout = () => {
+    return (dispatch, getState) => {
+        localStorage.removeItem("token")
+        localStorage.removeItem("userId")
+        const token = getState().auth.token
+        dispatch(authLogout())
+        const request = {
+            method: "post",
+            url: "users/logout",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        axios(request)
+            .then((res) => {})
+            .catch((err) => {})
     }
 }
 
 export const auth = (email, password, isSignup) => {
     return (dispatch) => {
         dispatch(authStart())
-        let url = "signup"
+        let url = "users/signup"
         const user = {
             email,
             password
         }
         if (!isSignup) {
-            url = "signin"
+            url = "users/signin"
         }
         axios
             .post(url, user)

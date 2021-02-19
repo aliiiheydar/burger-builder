@@ -32,14 +32,21 @@ export const purchaseInit = () => {
 export const purchaseBurger = (orderData) => {
     return (dispatch, getState) => {
         dispatch(purchaseBurgerStart())
-        axios
-            .post(`/orders/${getState().auth.token}`, orderData)
+        const request = {
+            method: "post",
+            url: "orders",
+            data: orderData,
+            headers: {
+                Authorization: `Bearer ${getState().auth.token}`
+            }
+        }
+        axios(request)
             .then((res) => {
                 const initialIngredients = { ...getState().burgerBuilder.ingredients }
                 for (let ingKey in initialIngredients) {
                     initialIngredients[ingKey] = 0
                 }
-                dispatch(purchaseBurgerSuccess(res.data.id, orderData))
+                dispatch(purchaseBurgerSuccess(res.data._id, res.data))
                 dispatch(setIngredients(initialIngredients))
             })
             .catch((error) => {
@@ -70,8 +77,14 @@ const fetchOrdersFail = () => {
 export const fetchOrders = () => {
     return (dispatch, getState) => {
         dispatch(fetchOrdersStart())
-        axios
-            .get(`/orders/${getState().auth.token}`)
+        const request = {
+            method: "get",
+            url: "orders",
+            headers: {
+                Authorization: `Bearer ${getState().auth.token}`
+            }
+        }
+        axios(request)
             .then((res) => {
                 dispatch(fetchOrdersSuccess(res.data))
             })
