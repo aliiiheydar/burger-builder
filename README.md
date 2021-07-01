@@ -1,3 +1,12 @@
+# Burger Builder
+
+This project is client-side of a burger ordering app.
+This is created by React.
+
+To see the deployed project, refer to the following link.
+
+https://heydar-burger-builder.herokuapp.com
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
