@@ -1,7 +1,7 @@
 # Burger Builder
 
 This project is client-side of a burger ordering app.
-This is created by React.
+It was created using React.
 
 To see the deployed project, refer to the following link.
 
